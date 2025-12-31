@@ -14,17 +14,17 @@ import sys
 import os
 import glob
 # parser
-from lib.ocr_by_vision_api import ocr_folder_image
+from src.ocr_by_vision_api import ocr_folder_image
 
 
 def main(folder):
     ocr_folder_image(folder)
 
-    
+
 if __name__=="__main__":
     try:
         folder = sys.argv[1]
     except:
         folder = 'output/'
-        
+
     main(folder)
