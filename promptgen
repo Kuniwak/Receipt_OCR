@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+
+BASE_DIR="$(cd "$(dirname "$0")"; pwd)"
+PYTHON="$BASE_DIR/bin/python3.14"
+
+echo-stderr() {
+	local msg="$*"
+	printf "%s\n" "$msg" 1>&2
+}
+
+
+throw() {
+	local msg="$*"
+	echo-stderr "$msg"
+	false
+}
+
+
+main() {
+	local receipt="${1:-}"
+
+	[[ -r "$receipt" ]] || throw "no such a file: $receipt"
+
+	"$PYTHON" "$BASE_DIR/main_stdinsubst.py" -r '%%RECEIPT%%' -t <(echo "$receipt" | sed -e 's|\.txt$|.json|' -e 's|^\./output/text/|./output/json/|' | "$PYTHON" "$BASE_DIR/main_stdinsubst.py" -t "$BASE_DIR/prompt/main.md" -r '%%OUTPUT%%') < "$receipt"
+}
+
+main "$@"
